@@ -161,7 +161,9 @@ def run_data_preprocessing(data_input_path: str, output_directory: str):
 
 
 if __name__ == "__main__":
-    DATA_FILE = "../diabetes_012_health_indicators_BRFSS2015.csv"
-    OUTPUT_DIR = "processed_data"
+    script_directory = Path(__file__).resolve().parent
 
-    run_data_preprocessing(DATA_FILE, OUTPUT_DIR)
+    DATA_FILE = script_directory.parent / "diabetes_012_health_indicators_BRFSS2015.csv"
+    OUTPUT_DIR = script_directory / "processed_data"
+
+    run_data_preprocessing(str(DATA_FILE), str(OUTPUT_DIR))
