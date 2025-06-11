@@ -1,0 +1,43 @@
+name: Automated Preprocessing
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.8.8
+        with:
+          cache: true
+
+      - name: Install dependencies with Pixi
+        run: |
+          pixi install
+
+      - name: Run preprocessing
+        run: pixi run python preprocessing/automate_Patuh-Rujhan-Al-Istizhar.py
+
+      - name: Commit and push processed data
+        run: |
+          git config --global user.name "${{ secrets.USERNAME }}"
+          git config --global user.email "${{ secrets.EMAIL }}"
+
+          git add preprocessing/diabetes_health_indicators_preprocessing/train_processed.csv preprocessing/diabetes_health_indicators_preprocessing/test_processed.csv
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m 'Automated: Update preprocessed datasets'
+            git push
+          fi
